@@ -317,7 +317,7 @@
             this.Controls.Add(this.btnSaveProfile);
             this.Controls.Add(this.btnNewProfile);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "frmMain";
             this.Text = "MonitorProfiler";

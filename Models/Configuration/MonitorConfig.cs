@@ -8,7 +8,7 @@ namespace MonitorProfiler.Models.Configuration
     public class MonitorConfig
     {
         public int Index { get; set; }
-        public uint Brightness { get; set; }
-        public uint Contrast { get; set; }
+        public int Brightness { get; set; }
+        public int Contrast { get; set; }
     }
 }

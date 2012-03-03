@@ -148,14 +148,19 @@ namespace MonitorProfiler
         private void lstProfiles_SelectedValueChanged(object sender, EventArgs e)
         {
             var selectedProfile = _config.Profiles.Where(p => p.Name == lstProfiles.SelectedItem.ToString()).FirstOrDefault();
+            
             if (selectedProfile == null)
                 return;
 
-            else
-                foreach (var monitorCfg in selectedProfile.MonitorConfigs)
-                {
+            foreach (var monitorCfg in selectedProfile.MonitorConfigs)
+            {
+                if (monitorCfg.Index >= cboMonitors.Items.Count)
+                    continue;
 
-                }
+                cboMonitors.SelectedIndex = monitorCfg.Index;
+                barBrightness.Value = monitorCfg.Brightness;
+                barContrast.Value = monitorCfg.Contrast;
+            }
         }
     }
 }
