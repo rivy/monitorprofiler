@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Linq;
 //using System.Threading;
 using System.Windows.Forms;
 using MonitorProfiler.GUI;
@@ -146,7 +147,15 @@ namespace MonitorProfiler
 
         private void lstProfiles_SelectedValueChanged(object sender, EventArgs e)
         {
+            var selectedProfile = _config.Profiles.Where(p => p.Name == lstProfiles.SelectedItem.ToString()).FirstOrDefault();
+            if (selectedProfile == null)
+                return;
 
+            else
+                foreach (var monitorCfg in selectedProfile.MonitorConfigs)
+                {
+
+                }
         }
     }
 }
