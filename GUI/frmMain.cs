@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Linq;
-//using System.Threading;
 using System.Windows.Forms;
 using MonitorProfiler.GUI;
 using MonitorProfiler.Win32;
@@ -37,6 +36,8 @@ namespace MonitorProfiler
             {
                 Log("-----");
                 Log(monitor.Name);
+                Log(monitor.Index);
+                Log(monitor.HPhysicalMonitor);
                 Log("DDC : {0}", monitor.SupportsDDC);
                 Log("Brightness : {0}", monitor.Brightness.Supported);
                 Log("Contrast : {0}", monitor.Contrast.Supported);
@@ -74,9 +75,9 @@ namespace MonitorProfiler
         #region Private Methods
 
         // Writes message to a textbox and scroll it to bottom
-        private void Log(string message, params object[] args)
+        private void Log(object message, params object[] args)
         {
-            txtLog.Text += Environment.NewLine + string.Format(message, args);
+            txtLog.Text += Environment.NewLine + string.Format(message.ToString(), args);
             NativeMethods.ScrollToBottom(txtLog);
         }
 
@@ -100,12 +101,12 @@ namespace MonitorProfiler
 
         private void RefreshSliders(Monitor m)
         {
-            barBrightness.Enabled = m.Brightness.Supported;
+            barBrightness.Visible = m.Brightness.Supported;
             barBrightness.Minimum = (int) m.Brightness.Min;
             barBrightness.Maximum = (int) m.Brightness.Max;
             barBrightness.Value = (int) m.Brightness.Current;
             
-            barContrast.Enabled = m.Contrast.Supported;
+            barContrast.Visible = m.Contrast.Supported;
             barContrast.Minimum = (int) m.Contrast.Min;
             barContrast.Maximum = (int) m.Contrast.Max;
             barContrast.Value = (int) m.Contrast.Current;

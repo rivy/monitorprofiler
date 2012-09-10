@@ -5,6 +5,8 @@ using System.Text;
 using MonitorProfiler.Models.Configuration;
 using System.Xml.Serialization;
 using System.IO;
+using MonitorProfiler.Win32;
+using System.Runtime.InteropServices;
 
 namespace TestApp
 {
@@ -13,31 +15,26 @@ namespace TestApp
 
         static void Main(string[] args)
         {
-            var config = new Config
+            var device = new NativeStructures.DISPLAY_DEVICE();
+            device.cb = Marshal.SizeOf(device);
+            for (uint id = 0; NativeMethods.EnumDisplayDevices(null, id, ref device, 0); id++)
             {
-                Profiles = new List<Profile>
-                {
-                    new Profile{ Name = "One", MonitorConfigs = new List<MonitorConfig>
-                    {
-                        new MonitorConfig{Index = 0, Brightness = 30, Contrast = 18}} 
-                    },
-                    new Profile{ Name = "Two", MonitorConfigs = new List<MonitorConfig>
-                    {
-                        new MonitorConfig{Index = 0, Brightness = 15, Contrast = 18}} 
-                    },
-                }
-            };
+                Console.WriteLine(String.Format("{0}, {1}, {2}, {3}, {4}, {5}", 
+                    id, device.DeviceName, device.DeviceString, device.StateFlags, device.DeviceID, device.DeviceKey));
+                Console.WriteLine();
+                device.cb = Marshal.SizeOf(device);
 
+                NativeMethods.EnumDisplayDevices(device.DeviceName, 0, ref device, 0);
 
-            var xmlSerializer = new XmlSerializer(typeof(Config));
-            using (var stream = new MemoryStream())
-            {
-                xmlSerializer.Serialize(stream, config);
-                stream.Position = 0;
-                var reader = new StreamReader(stream);
+                Console.WriteLine(String.Format("{0}, {1}, {2}, {3}, {4}, {5}", 
+                    id, device.DeviceName, device.DeviceString, device.StateFlags, device.DeviceID, device.DeviceKey));
+                device.cb = Marshal.SizeOf(device);
 
-                var s = reader.ReadToEnd();
+                Console.WriteLine("--------------");
+                //return;
             }
+
+            Console.ReadKey();
         }
     }
 }
