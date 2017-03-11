@@ -10,6 +10,7 @@ namespace MonitorProfiler.Models.Display
         Brightness,
         Contrast,
         RedDrive, GreenDrive, BlueDrive,
-        RedGain, GreenGain, BlueGain
+        RedGain, GreenGain, BlueGain,
+        Volume
     }
 }

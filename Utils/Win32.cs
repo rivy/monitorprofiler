@@ -66,6 +66,11 @@ namespace MonitorProfiler.Win32
         public static extern bool GetMonitorBrightness(
             [In]IntPtr hMonitor, ref uint pdwMinimumBrightness, ref uint pdwCurrentBrightness, ref uint pdwMaximumBrightness);
 
+        [DllImport("dxva2.dll", EntryPoint = "GetMonitorBrightness", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetMonitorBrightness(
+            IntPtr hMonitor, ref short pdwMinimumBrightness, ref short pdwCurrentBrightness, ref short pdwMaximumBrightness);
+
         [DllImport("dxva2.dll", EntryPoint = "SetMonitorContrast", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetMonitorContrast([In]IntPtr hMonitor, [In]uint pdwNewContrast);
@@ -75,29 +80,46 @@ namespace MonitorProfiler.Win32
         public static extern bool GetMonitorContrast(
             [In]IntPtr hMonitor, ref uint pdwMinimumContrast, ref uint pdwCurrentContrast, ref uint pdwMaximumContrast);
 
+        [DllImport("dxva2.dll", EntryPoint = "SetMonitorRedGreenOrBlueDrive", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetMonitorRedGreenOrBlueDrive(
+            [In]IntPtr hMonitor, [In]NativeStructures.MC_DRIVE_TYPE dtDriveType, [In]uint pdwNewDrive);
+
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorRedGreenOrBlueDrive", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetMonitorRedGreenOrBlueDrive(
-            [In]IntPtr hMonitor, [In]NativeStructures.MC_DRIVE_TYPE dtDriveType, 
+            [In]IntPtr hMonitor, [In]NativeStructures.MC_DRIVE_TYPE dtDriveType,
             ref uint pdwMinimumDrive, ref uint pdwCurrentDrive, ref uint pdwMaximumDrive);
+
+        [DllImport("dxva2.dll", EntryPoint = "SetMonitorRedGreenOrBlueGain", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetMonitorRedGreenOrBlueGain(
+            [In]IntPtr hMonitor, [In]NativeStructures.MC_GAIN_TYPE dtDriveType, [In]uint pdwNewGain);
 
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorRedGreenOrBlueGain", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetMonitorRedGreenOrBlueGain(
-            [In]IntPtr hMonitor, [In]NativeStructures.MC_GAIN_TYPE dtDriveType, 
-            ref uint pdwMinimumGain, ref uint pdwCurrentGain, ref uint pdwMaximumGain);
+            [In]IntPtr hMonitor, [In]NativeStructures.MC_GAIN_TYPE dtDriveType, ref uint pdwMinimumGain, ref uint pdwCurrentGain, ref uint pdwMaximumGain);
 
+        [DllImport("dxva2.dll", EntryPoint = "SetVCPFeature", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetVCPFeature(
+            [In]IntPtr hMonitor, byte bVCPCode, uint dwNewValue);
+
+        [DllImport("dxva2.dll", EntryPoint = "GetVCPFeatureAndVCPFeatureReply", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetVCPFeatureAndVCPFeatureReply(
+            [In]IntPtr hMonitor, byte bVCPCode, [Out]IntPtr pvct, ref uint pdwCurrentValue, ref uint pdwMaximumValue);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        public static extern int SendMessage(
+            IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
     
         public static void ScrollToBottom(System.Windows.Forms.TextBox txtBox)
         {
             // Scroll to the bottom, without moving the caret position.
             NativeMethods.SendMessage(txtBox.Handle, NativeConstants.WM_VSCROLL, (IntPtr) NativeConstants.SB_BOTTOM, IntPtr.Zero);
         }
-    
-    
     }
     
     public class NativeConstants
@@ -108,6 +130,12 @@ namespace MonitorProfiler.Win32
         
         public const int WM_VSCROLL = 0x115;
         public const int WM_HSCROLL = 0x114;
+        public const int WM_SYSCOMMAND = 0x112;
+
+        public const byte SC_MONITORINPUT = 0x60;
+        public const byte SC_MONITORVOLUME = 0x62;
+        public const byte SC_MONITORPOWER = 0xD6;
+        public const int SC_MONITORSLEEP = 0xF170;
 
         public const int SB_LINEDOWN = 1;
         public const int SB_LINEUP = 0;
@@ -116,6 +144,21 @@ namespace MonitorProfiler.Win32
         public const int SB_PAGEUP = 2;
         public const int SB_PAGEDOWN = 3;
 
+        public const int MONITOR_ON = -1;
+        public const int MONITOR_OFF = 2;
+        public const int MONITOR_STANBY = 1;
+
+        public int HWND_BROADCAST = 0xffff;
+        //the message is sent to all 
+        //top-level windows in the system
+
+        public int HWND_TOPMOST = -1;
+        //the message is sent to one 
+        //top-level window in the system
+
+        public int HWND_TOP = 0; //
+        public int HWND_BOTTOM = 1; //limited use
+        public int HWND_NOTOPMOST = -2; //
     }
 
     public class NativeStructures
@@ -160,6 +203,12 @@ namespace MonitorProfiler.Win32
             MC_ELECTROLUMINESCENT,
             MC_MICROELECTROMECHANICAL,
             MC_FIELD_EMISSION_DEVICE,
+        }
+
+        public enum MC_VCP_CODE_TYPE
+        {
+            MC_MOMENTARY,
+            MC_SET_PARAMETER,
         }
 
         public enum MC_MONITOR_CAPABILITIES
