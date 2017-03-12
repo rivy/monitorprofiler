@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace MonitorProfiler.Win32
@@ -9,13 +11,14 @@ namespace MonitorProfiler.Win32
     {
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rectangle lprcMonitor, IntPtr dwData);
 
-        [DllImport("user32.dll")]
-        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip,
-           MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+        [DllImport("kernel32.dll")]
+        public static extern uint GetLastError();
 
         [DllImport("user32.dll")]
-        public static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, 
-            ref NativeStructures.DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
+        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+
+        [DllImport("user32.dll")]
+        public static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref NativeStructures.DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
 
         [DllImport("user32.dll")]
         public static extern bool GetMonitorInfo(IntPtr hmon, ref NativeStructures.MonitorInfoEx mi);
@@ -35,13 +38,11 @@ namespace MonitorProfiler.Win32
 
         [DllImport("dxva2.dll", EntryPoint = "GetPhysicalMonitorsFromHMONITOR", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetPhysicalMonitorsFromHMONITOR(
-            IntPtr hMonitor, uint dwPhysicalMonitorArraySize, [Out] NativeStructures.PHYSICAL_MONITOR[] pPhysicalMonitorArray);
+        public static extern bool GetPhysicalMonitorsFromHMONITOR(IntPtr hMonitor, uint dwPhysicalMonitorArraySize, [Out] NativeStructures.PHYSICAL_MONITOR[] pPhysicalMonitorArray);
 
         [DllImport("dxva2.dll", EntryPoint = "DestroyPhysicalMonitors", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DestroyPhysicalMonitors(
-            uint dwPhysicalMonitorArraySize, [Out] NativeStructures.PHYSICAL_MONITOR[] pPhysicalMonitorArray);
+        public static extern bool DestroyPhysicalMonitors(uint dwPhysicalMonitorArraySize, [Out] NativeStructures.PHYSICAL_MONITOR[] pPhysicalMonitorArray);
 
         [DllImport("dxva2.dll", EntryPoint = "DestroyPhysicalMonitor", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -49,13 +50,11 @@ namespace MonitorProfiler.Win32
 
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorTechnologyType", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorTechnologyType(
-            IntPtr hMonitor, ref NativeStructures.MC_DISPLAY_TECHNOLOGY_TYPE pdtyDisplayTechnologyType);
+        public static extern bool GetMonitorTechnologyType(IntPtr hMonitor, ref NativeStructures.MC_DISPLAY_TECHNOLOGY_TYPE pdtyDisplayTechnologyType);
 
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorCapabilities", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorCapabilities(
-            IntPtr hMonitor, ref uint pdwMonitorCapabilities, ref uint pdwSupportedColorTemperatures);
+        public static extern bool GetMonitorCapabilities(IntPtr hMonitor, ref uint pdwMonitorCapabilities, ref uint pdwSupportedColorTemperatures);
 
         [DllImport("dxva2.dll", EntryPoint = "SetMonitorBrightness", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -63,8 +62,11 @@ namespace MonitorProfiler.Win32
         
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorBrightness", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorBrightness(
-            [In]IntPtr hMonitor, ref uint pdwMinimumBrightness, ref uint pdwCurrentBrightness, ref uint pdwMaximumBrightness);
+        public static extern bool GetMonitorBrightness([In]IntPtr hMonitor, ref uint pdwMinimumBrightness, ref uint pdwCurrentBrightness, ref uint pdwMaximumBrightness);
+
+        [DllImport("dxva2.dll", EntryPoint = "GetMonitorBrightness", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetMonitorBrightness(IntPtr hMonitor, ref short pdwMinimumBrightness, ref short pdwCurrentBrightness, ref short pdwMaximumBrightness);
 
         [DllImport("dxva2.dll", EntryPoint = "SetMonitorContrast", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -72,21 +74,39 @@ namespace MonitorProfiler.Win32
         
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorContrast", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorContrast(
-            [In]IntPtr hMonitor, ref uint pdwMinimumContrast, ref uint pdwCurrentContrast, ref uint pdwMaximumContrast);
+        public static extern bool GetMonitorContrast([In]IntPtr hMonitor, ref uint pdwMinimumContrast, ref uint pdwCurrentContrast, ref uint pdwMaximumContrast);
+
+        [DllImport("dxva2.dll", EntryPoint = "SetMonitorRedGreenOrBlueDrive", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetMonitorRedGreenOrBlueDrive([In]IntPtr hMonitor, [In]NativeStructures.MC_DRIVE_TYPE dtDriveType, [In]uint pdwNewDrive);
 
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorRedGreenOrBlueDrive", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorRedGreenOrBlueDrive(
-            [In]IntPtr hMonitor, [In]NativeStructures.MC_DRIVE_TYPE dtDriveType, 
-            ref uint pdwMinimumDrive, ref uint pdwCurrentDrive, ref uint pdwMaximumDrive);
+        public static extern bool GetMonitorRedGreenOrBlueDrive([In]IntPtr hMonitor, [In]NativeStructures.MC_DRIVE_TYPE dtDriveType, ref uint pdwMinimumDrive, ref uint pdwCurrentDrive, ref uint pdwMaximumDrive);
+
+        [DllImport("dxva2.dll", EntryPoint = "SetMonitorRedGreenOrBlueGain", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetMonitorRedGreenOrBlueGain([In]IntPtr hMonitor, [In]NativeStructures.MC_GAIN_TYPE dtDriveType, [In]uint pdwNewGain);
 
         [DllImport("dxva2.dll", EntryPoint = "GetMonitorRedGreenOrBlueGain", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorRedGreenOrBlueGain(
-            [In]IntPtr hMonitor, [In]NativeStructures.MC_GAIN_TYPE dtDriveType, 
-            ref uint pdwMinimumGain, ref uint pdwCurrentGain, ref uint pdwMaximumGain);
+        public static extern bool GetMonitorRedGreenOrBlueGain([In]IntPtr hMonitor, [In]NativeStructures.MC_GAIN_TYPE dtDriveType, ref uint pdwMinimumGain, ref uint pdwCurrentGain, ref uint pdwMaximumGain);
 
+        [DllImport("Dxva2.dll", EntryPoint = "GetCapabilitiesStringLength", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetCapabilitiesStringLength(IntPtr hMonitor, out uint numCharacters);
+
+        [DllImport("dxva2.dll", EntryPoint = "CapabilitiesRequestAndCapabilitiesReply", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CapabilitiesRequestAndCapabilitiesReply(IntPtr hMonitor, StringBuilder capabilities, uint capabilitiesLength);
+
+        [DllImport("dxva2.dll", EntryPoint = "SetVCPFeature", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetVCPFeature([In]IntPtr hMonitor, byte bVCPCode, uint dwNewValue);
+
+        [DllImport("dxva2.dll", EntryPoint = "GetVCPFeatureAndVCPFeatureReply", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetVCPFeatureAndVCPFeatureReply([In]IntPtr hMonitor, byte bVCPCode, [Out]IntPtr pvct, ref uint pdwCurrentValue, ref uint pdwMaximumValue);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
@@ -96,8 +116,6 @@ namespace MonitorProfiler.Win32
             // Scroll to the bottom, without moving the caret position.
             NativeMethods.SendMessage(txtBox.Handle, NativeConstants.WM_VSCROLL, (IntPtr) NativeConstants.SB_BOTTOM, IntPtr.Zero);
         }
-    
-    
     }
     
     public class NativeConstants
@@ -108,6 +126,13 @@ namespace MonitorProfiler.Win32
         
         public const int WM_VSCROLL = 0x115;
         public const int WM_HSCROLL = 0x114;
+        public const int WM_SYSCOMMAND = 0x112;
+
+        public const byte SC_MONITORINPUT = 0x60;
+        public const byte SC_MONITORVOLUME = 0x62;
+        public const byte SC_MONITORPOWER = 0xD6;
+        public const int SC_MONITORSHARPNESS = 0x87;
+        public const int SC_MONITORSLEEP = 0xF170;
 
         public const int SB_LINEDOWN = 1;
         public const int SB_LINEUP = 0;
@@ -116,10 +141,88 @@ namespace MonitorProfiler.Win32
         public const int SB_PAGEUP = 2;
         public const int SB_PAGEDOWN = 3;
 
+        public const int MONITOR_ON = -1;
+        public const int MONITOR_OFF = 2;
+        public const int MONITOR_STANBY = 1;
+
+        public int HWND_BROADCAST = 0xffff;
+        //the message is sent to all 
+        //top-level windows in the system
+
+        public int HWND_TOPMOST = -1;
+        //the message is sent to one 
+        //top-level window in the system
+
+        public int HWND_TOP = 0; //
+        public int HWND_BOTTOM = 1; //limited use
+        public int HWND_NOTOPMOST = -2; //
+
+        public static readonly string modelPattern = @"model\((.*?)\)";
+        // Operates on result of CapabilitiesRequestAndCapabilitiesReply(). Extracts vcp code 60 values into capture group 1.
+        public static readonly string vcp60ValuesPattern = @"vcp\((?:.*?\(.*?\))*[^\(\)]*?60 ?\((.*?)\)";
+        // Operates on result of CapabilitiesRequestAndCapabilitiesReply(). Extracts the MCCS version.
+        public static readonly string mccsVersionPattern = @"mccs_ver\((.*?)\)";
+        public static readonly Regex modelRegex = new Regex(modelPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static readonly Regex vcp60ValuesRegex = new Regex(vcp60ValuesPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static readonly Regex mccsVersionRegex = new Regex(mccsVersionPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        // Sources in MCCS v2.0 == v2.1, and both are a subset of 2.2, so we use a single array to cover them all.
+        // Note that the standards use one-based indexing, so we just add a dummy element at the start.
+        public static readonly string[] sourceNamesMccsV2 = {
+            "**undefined**",
+            "VGA 1",
+            "VGA 2",
+            "DVI 1",
+            "DVI 2",
+            "Composite 1",
+            "Composite 2",
+            "S-video 1",
+            "S-video 2",
+            "Tuner 1",
+            "Tuner 2",
+            "Tuner 3",
+            "Component 1",
+            "Component 2",
+            "Component 3",
+            "DisplayPort 1",
+            "DisplayPort 2",
+            "HDMI 1",
+            "HDMI 2"
+        };
+
+        // Note that MCCS v3.0 was not well adopted, so 2.2a has become the active standard.
+        // Note that the standards use one-based indexing, so we just add a dummy element at the start.
+        public static readonly string[] sourceNamesMccsV3 = {
+            "**undefined**",
+            "VGA 1",
+            "VGA 2",
+            "DVI 1",
+            "DVI 2",
+            "Composite 1",
+            "Composite 2",
+            "S-video 1",
+            "S-video 2",
+            "Tuner - Analog 1",
+            "Tuner - Analog 2",
+            "Tuner - Digital 1",
+            "Tuner - Digital 2",
+            "Component 1",
+            "Component 2",
+            "Component 3",
+            "**Unrecognized**",
+            "DisplayPort 1",
+            "DisplayPort 2"
+        };
     }
 
     public class NativeStructures
     {
+        internal struct MonitorSource
+        {
+            public int code;
+            public string name;
+        }
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct PHYSICAL_MONITOR
         {
@@ -160,6 +263,12 @@ namespace MonitorProfiler.Win32
             MC_ELECTROLUMINESCENT,
             MC_MICROELECTROMECHANICAL,
             MC_FIELD_EMISSION_DEVICE,
+        }
+
+        public enum MC_VCP_CODE_TYPE
+        {
+            MC_MOMENTARY,
+            MC_SET_PARAMETER,
         }
 
         public enum MC_MONITOR_CAPABILITIES
@@ -230,43 +339,4 @@ namespace MonitorProfiler.Win32
             Disconnect = 0x2000000
         }
     }
-
-    /*public Window1() { InitializeComponent(); }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        WindowInteropHelper helper = new WindowInteropHelper(this);
-
-        IntPtr hMonitor = NativeMethods.MonitorFromWindow(helper.Handle, NativeConstants.MONITOR_DEFAULTTOPRIMARY);
-        int lastWin32Error = Marshal.GetLastWin32Error();
-
-        uint pdwNumberOfPhysicalMonitors = 0u;
-        bool numberOfPhysicalMonitorsFromHmonitor = NativeMethods.GetNumberOfPhysicalMonitorsFromHMONITOR(
-            hMonitor, ref pdwNumberOfPhysicalMonitors);
-        lastWin32Error = Marshal.GetLastWin32Error();
-
-        NativeStructures.PHYSICAL_MONITOR[] pPhysicalMonitorArray =
-            new NativeStructures.PHYSICAL_MONITOR[pdwNumberOfPhysicalMonitors];
-        bool physicalMonitorsFromHmonitor = NativeMethods.GetPhysicalMonitorsFromHMONITOR(
-            hMonitor, pdwNumberOfPhysicalMonitors, pPhysicalMonitorArray);
-        lastWin32Error = Marshal.GetLastWin32Error();
-
-        uint pdwMonitorCapabilities = 0u;
-        uint pdwSupportedColorTemperatures = 0u;
-        var monitorCapabilities = NativeMethods.GetMonitorCapabilities(
-            pPhysicalMonitorArray[0].hPhysicalMonitor, ref pdwMonitorCapabilities, ref pdwSupportedColorTemperatures);
-        lastWin32Error = Marshal.GetLastWin32Error();
-
-        NativeStructures.MC_DISPLAY_TECHNOLOGY_TYPE type =
-            NativeStructures.MC_DISPLAY_TECHNOLOGY_TYPE.MC_SHADOW_MASK_CATHODE_RAY_TUBE;
-        var monitorTechnologyType = NativeMethods.GetMonitorTechnologyType(
-            pPhysicalMonitorArray[0].hPhysicalMonitor, ref type);
-        lastWin32Error = Marshal.GetLastWin32Error();
-
-        var destroyPhysicalMonitors = NativeMethods.DestroyPhysicalMonitors(
-            pdwNumberOfPhysicalMonitors, pPhysicalMonitorArray);
-        lastWin32Error = Marshal.GetLastWin32Error();
-
-        this.lbl.Content = type;
-    }*/
 }
