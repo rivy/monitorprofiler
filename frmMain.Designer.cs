@@ -52,7 +52,17 @@ namespace MonitorProfiler
             this.barVolume = new System.Windows.Forms.TrackBar();
             this.lblVolume = new System.Windows.Forms.Label();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.cboFactoryReset = new System.Windows.Forms.ComboBox();
+            this.lblSharpness = new System.Windows.Forms.Label();
+            this.barSharpness = new System.Windows.Forms.TrackBar();
+            this.picSharpness = new System.Windows.Forms.PictureBox();
+            this.btnFactoryReset = new System.Windows.Forms.Button();
+            this.btnInput = new System.Windows.Forms.Button();
+            this.btnPower = new System.Windows.Forms.Button();
             this.picVolume = new System.Windows.Forms.PictureBox();
+            this.btnDeleteProfile = new System.Windows.Forms.Button();
+            this.btnSaveProfile = new System.Windows.Forms.Button();
+            this.btnNewProfile = new System.Windows.Forms.Button();
             this.picBlue = new System.Windows.Forms.PictureBox();
             this.picGreen = new System.Windows.Forms.PictureBox();
             this.picRed = new System.Windows.Forms.PictureBox();
@@ -60,17 +70,14 @@ namespace MonitorProfiler
             this.picBrightness = new System.Windows.Forms.PictureBox();
             this.btnLinkMonitors = new System.Windows.Forms.Button();
             this.btnIdentifyMonitor = new System.Windows.Forms.Button();
-            this.btnInput = new System.Windows.Forms.Button();
-            this.btnDeleteProfile = new System.Windows.Forms.Button();
-            this.btnSaveProfile = new System.Windows.Forms.Button();
-            this.btnPower = new System.Windows.Forms.Button();
-            this.btnNewProfile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barGreen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.barRed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.barContrast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.barBrightness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.barBlue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.barVolume)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.barSharpness)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSharpness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBlue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picGreen)).BeginInit();
@@ -87,7 +94,7 @@ namespace MonitorProfiler
             this.cboInput.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cboInput.FormattingEnabled = true;
             this.cboInput.ItemHeight = 22;
-            this.cboInput.Location = new System.Drawing.Point(9, 227);
+            this.cboInput.Location = new System.Drawing.Point(9, 182);
             this.cboInput.Name = "cboInput";
             this.cboInput.Size = new System.Drawing.Size(90, 28);
             this.cboInput.TabIndex = 20;
@@ -102,7 +109,7 @@ namespace MonitorProfiler
             this.cboPower.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cboPower.FormattingEnabled = true;
             this.cboPower.ItemHeight = 22;
-            this.cboPower.Location = new System.Drawing.Point(9, 196);
+            this.cboPower.Location = new System.Drawing.Point(9, 151);
             this.cboPower.Name = "cboPower";
             this.cboPower.Size = new System.Drawing.Size(90, 28);
             this.cboPower.TabIndex = 19;
@@ -148,23 +155,23 @@ namespace MonitorProfiler
             // barGreen
             // 
             this.barGreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.barGreen.LargeChange = 1;
             this.barGreen.Location = new System.Drawing.Point(175, 132);
-            this.barGreen.Maximum = 20;
+            this.barGreen.Maximum = 100;
             this.barGreen.Name = "barGreen";
             this.barGreen.Size = new System.Drawing.Size(185, 45);
             this.barGreen.TabIndex = 12;
+            this.barGreen.TickFrequency = 5;
             this.barGreen.ValueChanged += new System.EventHandler(this.TrackBar_ValueChanged);
             // 
             // barRed
             // 
             this.barRed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.barRed.LargeChange = 1;
             this.barRed.Location = new System.Drawing.Point(175, 102);
-            this.barRed.Maximum = 20;
+            this.barRed.Maximum = 100;
             this.barRed.Name = "barRed";
             this.barRed.Size = new System.Drawing.Size(185, 45);
             this.barRed.TabIndex = 11;
+            this.barRed.TickFrequency = 5;
             this.barRed.ValueChanged += new System.EventHandler(this.TrackBar_ValueChanged);
             // 
             // cboMonitors
@@ -185,8 +192,9 @@ namespace MonitorProfiler
             // btnRevert
             // 
             this.btnRevert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRevert.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRevert.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRevert.Location = new System.Drawing.Point(326, 225);
+            this.btnRevert.Location = new System.Drawing.Point(0, 300);
             this.btnRevert.Name = "btnRevert";
             this.btnRevert.Size = new System.Drawing.Size(75, 30);
             this.btnRevert.TabIndex = 7;
@@ -208,12 +216,12 @@ namespace MonitorProfiler
             // barContrast
             // 
             this.barContrast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.barContrast.LargeChange = 1;
             this.barContrast.Location = new System.Drawing.Point(175, 72);
-            this.barContrast.Maximum = 20;
+            this.barContrast.Maximum = 100;
             this.barContrast.Name = "barContrast";
             this.barContrast.Size = new System.Drawing.Size(185, 45);
             this.barContrast.TabIndex = 3;
+            this.barContrast.TickFrequency = 5;
             this.barContrast.ValueChanged += new System.EventHandler(this.TrackBar_ValueChanged);
             // 
             // lblBrightness
@@ -230,19 +238,19 @@ namespace MonitorProfiler
             // barBrightness
             // 
             this.barBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.barBrightness.LargeChange = 1;
             this.barBrightness.Location = new System.Drawing.Point(175, 42);
-            this.barBrightness.Maximum = 20;
+            this.barBrightness.Maximum = 100;
             this.barBrightness.Name = "barBrightness";
             this.barBrightness.Size = new System.Drawing.Size(185, 45);
             this.barBrightness.TabIndex = 1;
+            this.barBrightness.TickFrequency = 5;
             this.barBrightness.ValueChanged += new System.EventHandler(this.TrackBar_ValueChanged);
             // 
             // txtLog
             // 
             this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Location = new System.Drawing.Point(-1, 262);
+            this.txtLog.Location = new System.Drawing.Point(-1, 300);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -256,31 +264,31 @@ namespace MonitorProfiler
             this.lstProfiles.ItemHeight = 15;
             this.lstProfiles.Location = new System.Drawing.Point(8, 8);
             this.lstProfiles.Name = "lstProfiles";
-            this.lstProfiles.Size = new System.Drawing.Size(123, 154);
+            this.lstProfiles.Size = new System.Drawing.Size(123, 109);
             this.lstProfiles.TabIndex = 7;
             this.lstProfiles.SelectedValueChanged += new System.EventHandler(this.lstProfiles_SelectedValueChanged);
             // 
             // barBlue
             // 
             this.barBlue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.barBlue.LargeChange = 1;
             this.barBlue.Location = new System.Drawing.Point(175, 162);
-            this.barBlue.Maximum = 20;
+            this.barBlue.Maximum = 100;
             this.barBlue.Name = "barBlue";
             this.barBlue.Size = new System.Drawing.Size(185, 45);
             this.barBlue.TabIndex = 13;
+            this.barBlue.TickFrequency = 5;
             this.barBlue.ValueChanged += new System.EventHandler(this.TrackBar_ValueChanged);
             // 
             // barVolume
             // 
             this.barVolume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.barVolume.Enabled = false;
-            this.barVolume.LargeChange = 1;
             this.barVolume.Location = new System.Drawing.Point(175, 192);
-            this.barVolume.Maximum = 20;
+            this.barVolume.Maximum = 100;
             this.barVolume.Name = "barVolume";
             this.barVolume.Size = new System.Drawing.Size(185, 45);
             this.barVolume.TabIndex = 32;
+            this.barVolume.TickFrequency = 5;
             this.barVolume.ValueChanged += new System.EventHandler(this.TrackBar_ValueChanged);
             // 
             // lblVolume
@@ -296,6 +304,91 @@ namespace MonitorProfiler
             this.lblVolume.Text = "0%";
             this.lblVolume.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
+            // cboFactoryReset
+            // 
+            this.cboFactoryReset.DisplayMember = "Key";
+            this.cboFactoryReset.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cboFactoryReset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboFactoryReset.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboFactoryReset.FormattingEnabled = true;
+            this.cboFactoryReset.ItemHeight = 22;
+            this.cboFactoryReset.Location = new System.Drawing.Point(9, 213);
+            this.cboFactoryReset.Name = "cboFactoryReset";
+            this.cboFactoryReset.Size = new System.Drawing.Size(90, 28);
+            this.cboFactoryReset.TabIndex = 36;
+            this.cboFactoryReset.ValueMember = "Value";
+            this.cboFactoryReset.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.OnDrawCbItem);
+            // 
+            // lblSharpness
+            // 
+            this.lblSharpness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblSharpness.AutoSize = true;
+            this.lblSharpness.Enabled = false;
+            this.lblSharpness.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSharpness.Location = new System.Drawing.Point(359, 224);
+            this.lblSharpness.Name = "lblSharpness";
+            this.lblSharpness.Size = new System.Drawing.Size(23, 15);
+            this.lblSharpness.TabIndex = 38;
+            this.lblSharpness.Text = "0%";
+            this.lblSharpness.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // barSharpness
+            // 
+            this.barSharpness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.barSharpness.Enabled = false;
+            this.barSharpness.Location = new System.Drawing.Point(175, 222);
+            this.barSharpness.Maximum = 100;
+            this.barSharpness.Name = "barSharpness";
+            this.barSharpness.Size = new System.Drawing.Size(185, 45);
+            this.barSharpness.TabIndex = 37;
+            this.barSharpness.TickFrequency = 5;
+            this.barSharpness.ValueChanged += new System.EventHandler(this.TrackBar_ValueChanged);
+            // 
+            // picSharpness
+            // 
+            this.picSharpness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.picSharpness.BackgroundImage = global::MonitorProfiler.Properties.Resources.sharpness;
+            this.picSharpness.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.picSharpness.Location = new System.Drawing.Point(139, 216);
+            this.picSharpness.Name = "picSharpness";
+            this.picSharpness.Size = new System.Drawing.Size(32, 32);
+            this.picSharpness.TabIndex = 39;
+            this.picSharpness.TabStop = false;
+            this.toolTips.SetToolTip(this.picSharpness, "Sharpness");
+            // 
+            // btnFactoryReset
+            // 
+            this.btnFactoryReset.BackgroundImage = global::MonitorProfiler.Properties.Resources.undo;
+            this.btnFactoryReset.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnFactoryReset.Location = new System.Drawing.Point(101, 212);
+            this.btnFactoryReset.Name = "btnFactoryReset";
+            this.btnFactoryReset.Size = new System.Drawing.Size(30, 30);
+            this.btnFactoryReset.TabIndex = 35;
+            this.btnFactoryReset.UseVisualStyleBackColor = true;
+            this.btnFactoryReset.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btnFactoryReset_Click);
+            // 
+            // btnInput
+            // 
+            this.btnInput.BackgroundImage = global::MonitorProfiler.Properties.Resources.split;
+            this.btnInput.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnInput.Location = new System.Drawing.Point(101, 181);
+            this.btnInput.Name = "btnInput";
+            this.btnInput.Size = new System.Drawing.Size(30, 30);
+            this.btnInput.TabIndex = 21;
+            this.btnInput.UseVisualStyleBackColor = true;
+            this.btnInput.Click += new System.EventHandler(this.btnInput_Click);
+            // 
+            // btnPower
+            // 
+            this.btnPower.BackgroundImage = global::MonitorProfiler.Properties.Resources.power;
+            this.btnPower.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnPower.Location = new System.Drawing.Point(101, 150);
+            this.btnPower.Name = "btnPower";
+            this.btnPower.Size = new System.Drawing.Size(30, 30);
+            this.btnPower.TabIndex = 18;
+            this.btnPower.UseVisualStyleBackColor = true;
+            this.btnPower.Click += new System.EventHandler(this.btnPower_Click);
+            // 
             // picVolume
             // 
             this.picVolume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -308,6 +401,38 @@ namespace MonitorProfiler
             this.picVolume.TabStop = false;
             this.toolTips.SetToolTip(this.picVolume, "Mute");
             this.picVolume.Click += new System.EventHandler(this.picVolume_Click);
+            // 
+            // btnDeleteProfile
+            // 
+            this.btnDeleteProfile.BackgroundImage = global::MonitorProfiler.Properties.Resources.delete;
+            this.btnDeleteProfile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnDeleteProfile.Location = new System.Drawing.Point(70, 119);
+            this.btnDeleteProfile.Name = "btnDeleteProfile";
+            this.btnDeleteProfile.Size = new System.Drawing.Size(30, 30);
+            this.btnDeleteProfile.TabIndex = 2;
+            this.btnDeleteProfile.UseVisualStyleBackColor = true;
+            this.btnDeleteProfile.Click += new System.EventHandler(this.btnDeleteProfile_Click);
+            // 
+            // btnSaveProfile
+            // 
+            this.btnSaveProfile.BackgroundImage = global::MonitorProfiler.Properties.Resources.save;
+            this.btnSaveProfile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnSaveProfile.Location = new System.Drawing.Point(8, 119);
+            this.btnSaveProfile.Name = "btnSaveProfile";
+            this.btnSaveProfile.Size = new System.Drawing.Size(30, 30);
+            this.btnSaveProfile.TabIndex = 1;
+            this.btnSaveProfile.UseVisualStyleBackColor = true;
+            this.btnSaveProfile.Click += new System.EventHandler(this.btnSaveProfile_Click);
+            // 
+            // btnNewProfile
+            // 
+            this.btnNewProfile.BackgroundImage = global::MonitorProfiler.Properties.Resources.add;
+            this.btnNewProfile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnNewProfile.Location = new System.Drawing.Point(39, 119);
+            this.btnNewProfile.Name = "btnNewProfile";
+            this.btnNewProfile.Size = new System.Drawing.Size(30, 30);
+            this.btnNewProfile.TabIndex = 3;
+            this.btnNewProfile.UseVisualStyleBackColor = true;
             // 
             // picBlue
             // 
@@ -372,7 +497,7 @@ namespace MonitorProfiler
             // btnLinkMonitors
             // 
             this.btnLinkMonitors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLinkMonitors.BackgroundImage = global::MonitorProfiler.Properties.Resources.lock_open;
+            this.btnLinkMonitors.BackgroundImage = global::MonitorProfiler.Properties.Resources.link;
             this.btnLinkMonitors.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.btnLinkMonitors.Location = new System.Drawing.Point(340, 7);
             this.btnLinkMonitors.Name = "btnLinkMonitors";
@@ -395,73 +520,24 @@ namespace MonitorProfiler
             this.btnIdentifyMonitor.UseVisualStyleBackColor = true;
             this.btnIdentifyMonitor.Click += new System.EventHandler(this.btnIdentifyMonitor_Click);
             // 
-            // btnInput
-            // 
-            this.btnInput.BackgroundImage = global::MonitorProfiler.Properties.Resources.split;
-            this.btnInput.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnInput.Location = new System.Drawing.Point(101, 226);
-            this.btnInput.Name = "btnInput";
-            this.btnInput.Size = new System.Drawing.Size(30, 30);
-            this.btnInput.TabIndex = 21;
-            this.btnInput.UseVisualStyleBackColor = true;
-            this.btnInput.Click += new System.EventHandler(this.btnInput_Click);
-            // 
-            // btnDeleteProfile
-            // 
-            this.btnDeleteProfile.BackgroundImage = global::MonitorProfiler.Properties.Resources.delete;
-            this.btnDeleteProfile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnDeleteProfile.Location = new System.Drawing.Point(70, 164);
-            this.btnDeleteProfile.Name = "btnDeleteProfile";
-            this.btnDeleteProfile.Size = new System.Drawing.Size(30, 30);
-            this.btnDeleteProfile.TabIndex = 2;
-            this.btnDeleteProfile.UseVisualStyleBackColor = true;
-            this.btnDeleteProfile.Click += new System.EventHandler(this.btnDeleteProfile_Click);
-            // 
-            // btnSaveProfile
-            // 
-            this.btnSaveProfile.BackgroundImage = global::MonitorProfiler.Properties.Resources.save;
-            this.btnSaveProfile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnSaveProfile.Location = new System.Drawing.Point(8, 164);
-            this.btnSaveProfile.Name = "btnSaveProfile";
-            this.btnSaveProfile.Size = new System.Drawing.Size(30, 30);
-            this.btnSaveProfile.TabIndex = 1;
-            this.btnSaveProfile.UseVisualStyleBackColor = true;
-            this.btnSaveProfile.Click += new System.EventHandler(this.btnSaveProfile_Click);
-            // 
-            // btnPower
-            // 
-            this.btnPower.BackgroundImage = global::MonitorProfiler.Properties.Resources.power;
-            this.btnPower.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnPower.Location = new System.Drawing.Point(101, 195);
-            this.btnPower.Name = "btnPower";
-            this.btnPower.Size = new System.Drawing.Size(30, 30);
-            this.btnPower.TabIndex = 18;
-            this.btnPower.UseVisualStyleBackColor = true;
-            this.btnPower.Click += new System.EventHandler(this.btnPower_Click);
-            // 
-            // btnNewProfile
-            // 
-            this.btnNewProfile.BackgroundImage = global::MonitorProfiler.Properties.Resources.add;
-            this.btnNewProfile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnNewProfile.Location = new System.Drawing.Point(39, 164);
-            this.btnNewProfile.Name = "btnNewProfile";
-            this.btnNewProfile.Size = new System.Drawing.Size(30, 30);
-            this.btnNewProfile.TabIndex = 3;
-            this.btnNewProfile.UseVisualStyleBackColor = true;
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(408, 364);
-            this.Controls.Add(this.picVolume);
-            this.Controls.Add(this.lblVolume);
+            this.ClientSize = new System.Drawing.Size(408, 402);
+            this.Controls.Add(this.picSharpness);
+            this.Controls.Add(this.lblSharpness);
+            this.Controls.Add(this.barSharpness);
+            this.Controls.Add(this.cboFactoryReset);
+            this.Controls.Add(this.btnFactoryReset);
             this.Controls.Add(this.btnInput);
             this.Controls.Add(this.cboInput);
-            this.Controls.Add(this.btnDeleteProfile);
             this.Controls.Add(this.cboPower);
-            this.Controls.Add(this.btnSaveProfile);
             this.Controls.Add(this.btnPower);
+            this.Controls.Add(this.picVolume);
+            this.Controls.Add(this.lblVolume);
+            this.Controls.Add(this.btnDeleteProfile);
+            this.Controls.Add(this.btnSaveProfile);
             this.Controls.Add(this.btnNewProfile);
             this.Controls.Add(this.btnRevert);
             this.Controls.Add(this.barVolume);
@@ -496,6 +572,8 @@ namespace MonitorProfiler
             ((System.ComponentModel.ISupportInitialize)(this.barBrightness)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.barBlue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.barVolume)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.barSharpness)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSharpness)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picVolume)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBlue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picGreen)).EndInit();
@@ -540,6 +618,11 @@ namespace MonitorProfiler
         private Label lblVolume;
         private PictureBox picVolume;
         private ToolTip toolTips;
+        private Button btnFactoryReset;
+        private ComboBox cboFactoryReset;
+        private PictureBox picSharpness;
+        private Label lblSharpness;
+        private TrackBar barSharpness;
     }
 }
 

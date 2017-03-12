@@ -9,5 +9,6 @@ namespace MonitorProfiler.Models.Display
     {
         public bool Supported;
         public uint Min, Max, Current, Original;
+        public string Values; 
     }
 }

@@ -125,6 +125,10 @@
     <None Include="Images\speaker_medium.png" />
     <None Include="Images\speaker_low.png" />
     <None Include="Images\speaker_high.png" />
+    <None Include="Images\factory_reset.png" />
+    <None Include="Images\undo.png" />
+    <None Include="Images\link.png" />
+    <None Include="Images\sharpness.png" />
     <Content Include="monitor.ico" />
     <Content Include="profiles.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

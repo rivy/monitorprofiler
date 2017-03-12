@@ -11,6 +11,8 @@ using MonitorProfiler.Models.Configuration;
 using System.Xml.Serialization;
 using System.IO;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace MonitorProfiler
 {
@@ -36,15 +38,22 @@ namespace MonitorProfiler
             int m = 1;
             foreach (Monitor monitor in _monitorCollection)
             {
-                Log("-----");
-                Log(monitor.Name);
-                Log(monitor.Index);
-                Log(monitor.HPhysicalMonitor);
-                Log("DDC : {0}", monitor.SupportsDDC);
+ 
+                //NativeMethods.G GetCapabilitiesStringLength(hMonitor, out strSize);
+                // IntPtr nullVal = IntPtr.Zero;
+                // int currentValue;
+                //int maxValue;
+                //NativeMethods.GetVCPFeatureAndVCPFeatureReply(monitor.HPhysicalMonitor, 0x60, IntPtr.Zero, out currentValue, out maxValue);
+
+                //Log("-----");
+                //Log(monitor.Name);
+                //Log(monitor.Index);
+                //Log(monitor.HPhysicalMonitor);
+                //Log("DDC : {0}", monitor.SupportsDDC);
                 //Log("Brightness : {0}", monitor.Brightness.Supported);
                 //Log("Contrast : {0}", monitor.Contrast.Supported);
-                Log("RGB Drive : {0}", monitor.RgbDrive.Supported);
-                Log("RGB Gain : {0}", monitor.RgbGain.Supported);
+                //Log("RGB Drive : {0}", monitor.RgbDrive.Supported);
+                //Log("RGB Gain : {0}", monitor.RgbGain.Supported);
 
                 cboMonitors.Items.Add(monitor.Name + " #" + m++);
             }
@@ -63,11 +72,17 @@ namespace MonitorProfiler
             Dictionary<string, string> power = new Dictionary<string, string>();
             power.Add("Power on", "1");
             power.Add("Standby", "2");
-            power.Add("Power off", "3");
-            power.Add("Power off1", "4");
-            power.Add("Power off2", "5");
+            power.Add("Suspend", "3");
+            power.Add("Reduced power off ", "4");
+            power.Add("Power off", "5");
             power.Add("Sleep", "61808");
             cboPower.DataSource = new BindingSource(power, null);
+
+            Dictionary<string, string> factoryreset = new Dictionary<string, string>();
+            factoryreset.Add("Reset luminance", "5");
+            factoryreset.Add("Reset colors", "8");
+            factoryreset.Add("Reset factory defaults", "4");
+            cboFactoryReset.DataSource = new BindingSource(factoryreset, null);
 
             Log("");
             Log("Ready...");
@@ -94,6 +109,25 @@ namespace MonitorProfiler
             else s = item.ToString();
             
             e.Graphics.DrawString(s, e.Font, brush, e.Bounds, format);
+        }
+
+        private void ParseVCPStuff()
+        {
+          /*
+            if(values)
+                string[] valueArray = valuesStr.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+
+        values = Array.ConvertAll(valueArray, s => int.Parse(s, System.Globalization.NumberStyles.HexNumber));
+            }
+
+    // Prepare output.
+    NativeStructures.MonitorSource[] sources = new NativeStructures.MonitorSource[values.Length];
+            for (int i = 0; i<values.Length; ++i)
+            {
+                sources[i].code = values[i];
+                if (0 <= values[i] && values[i] < sourceNames.Length) sources[i].name = sourceNames[values[i]];
+                else sources[i].name = "**Unrecognized**";
+            }*/
         }
 
         private void InitialiseProfiles()
@@ -149,6 +183,7 @@ namespace MonitorProfiler
                 {barRed, new TrackBarFeatures(FeatureType.RedGain, lblRed)},
                 {barGreen, new TrackBarFeatures(FeatureType.GreenGain, lblGreen)},
                 {barBlue, new TrackBarFeatures(FeatureType.BlueGain, lblBlue)},
+                {barSharpness, new TrackBarFeatures(FeatureType.Sharpness, lblSharpness)},
                 {barVolume, new TrackBarFeatures(FeatureType.Volume, lblVolume)},
             };
         }
@@ -162,66 +197,84 @@ namespace MonitorProfiler
 
         private void RefreshSliders(Monitor m)
         {
-            Debug.WriteLine("Brightness max " + m.Brightness.Max);
+            Debug.WriteLine("RefreshSliders - Brightness.Max: " + m.Brightness.Max);
             if (m.Brightness.Max > 0)
             {
-                barBrightness.Minimum = (int)m.Brightness.Min / 5;
-                barBrightness.Maximum = (int)m.Brightness.Max / 5;
-                barBrightness.Value = (int)m.Brightness.Current / 5;
+                barBrightness.Minimum = (int)m.Brightness.Min;
+                barBrightness.Maximum = (int)m.Brightness.Max;
+                barBrightness.Value = (int)m.Brightness.Current;
                 barBrightness.Enabled = true;
             }
             else barBrightness.Enabled = false;
 
-            Debug.WriteLine("Contrast max " + m.Contrast.Max);
+            Debug.WriteLine("RefreshSliders - Contrast.Max: " + m.Contrast.Max);
             if (m.Contrast.Max > 0)
             {
-                barContrast.Minimum = (int)m.Contrast.Min / 5;
-                barContrast.Maximum = (int)m.Contrast.Max / 5;
-                barContrast.Value = (int)m.Contrast.Current / 5;
+                barContrast.Minimum = (int)m.Contrast.Min;
+                barContrast.Maximum = (int)m.Contrast.Max;
+                barContrast.Value = (int)m.Contrast.Current;
                 barContrast.Enabled = true;
             }
             else barContrast.Enabled = false;
 
             if (m.RedGain.Max > 0)
             {
-                Debug.WriteLine("Red max " + m.RedGain.Max);
-                barRed.Minimum = (int)m.RedGain.Min / 5;
-                barRed.Maximum = (int)m.RedGain.Max / 5;
-                barRed.Value = (int)m.RedGain.Current / 5;
+                Debug.WriteLine("RefreshSliders - RedGain.Max: " + m.RedGain.Max);
+                barRed.Minimum = (int)m.RedGain.Min;
+                barRed.Maximum = (int)m.RedGain.Max;
+                barRed.Value = (int)m.RedGain.Current;
                 barRed.Enabled = true;
             }
             else barRed.Enabled = false;
 
-            Debug.WriteLine("Green max " + m.GreenGain.Max);
+            Debug.WriteLine("RefreshSliders - GreenGain.Max: " + m.GreenGain.Max);
             if (m.GreenGain.Max > 0)
             {
-                barGreen.Minimum = (int)m.GreenGain.Min / 5;
-                barGreen.Maximum = (int)m.GreenGain.Max / 5;
-                barGreen.Value = (int)m.GreenGain.Current / 5;
+                barGreen.Minimum = (int)m.GreenGain.Min;
+                barGreen.Maximum = (int)m.GreenGain.Max;
+                barGreen.Value = (int)m.GreenGain.Current;
                 barGreen.Enabled = true;
             }
             else barGreen.Enabled = false;
 
-            Debug.WriteLine("Blue max " + m.BlueGain.Max);
+            Debug.WriteLine("RefreshSliders - BlueGain.Max: " + m.BlueGain.Max);
             if (m.BlueGain.Max > 0)
             {
-                barBlue.Minimum = (int)m.BlueGain.Min / 5;
-                barBlue.Maximum = (int)m.BlueGain.Max / 5;
-                barBlue.Value = (int)m.BlueGain.Current / 5;
+                barBlue.Minimum = (int)m.BlueGain.Min;
+                barBlue.Maximum = (int)m.BlueGain.Max;
+                barBlue.Value = (int)m.BlueGain.Current;
                 barBlue.Enabled = true;
             }
             else barBlue.Enabled = false;
 
-            Debug.WriteLine("Volume max " + m.Volume.Current);
+            Debug.WriteLine("RefreshSliders - Sharpness.Max: " + m.Sharpness.Max);
+            if (m.Sharpness.Max > 0)
+            {
+                barSharpness.TickFrequency = 5;
+                if (m.Sharpness.Max < 20) barSharpness.TickFrequency = 1;
+                barSharpness.LargeChange = barSharpness.TickFrequency;
+                barSharpness.Minimum = 0;
+                barSharpness.Maximum = (int)m.Sharpness.Max;
+                barSharpness.Value = (int)m.Sharpness.Current;
+                barSharpness.Enabled = true;
+            }
+            else barSharpness.Enabled = false;
+            lblSharpness.Enabled = barSharpness.Enabled;
+
+            Debug.WriteLine("RefreshSliders - Volume.Max: " + m.Volume.Max);
             if (m.Volume.Max > 0)
             {
                 barVolume.Minimum = 0;
-                barVolume.Maximum = (int)m.Volume.Max / 5;
-                barVolume.Value = (int)m.Volume.Current / 5;
+                barVolume.Maximum = (int)m.Volume.Max;
+                barVolume.Value = (int)m.Volume.Current;
                 barVolume.Enabled = true;
             }
             else barVolume.Enabled = false;
             lblVolume.Enabled = barVolume.Enabled;
+
+            /*Debug.WriteLine("RefreshSliders - Volume.Max: " + m.Volume.Max);
+            cboInput.SelectedIndex = monitorCfg.Input;
+            cboPower.SelectedIndex = monitorCfg.Power;*/
         }
 
         #endregion
@@ -237,14 +290,14 @@ namespace MonitorProfiler
                 
                 if (cboMonitors.Enabled == true)
                 {
-                    Debug.WriteLine("Change NoLink");
+                    Debug.WriteLine("TrackBar_ValueChanged (no link)");
                     _bars[sender as TrackBar].UpdateScreenWithBarValue(sender as TrackBar, _currentMonitor);
                 } else
                 {
-                    Debug.WriteLine("Change Link");
+                    Debug.WriteLine("TrackBar_ValueChanged (linked)");
                     for (int i = 0; i < cboMonitors.Items.Count; i++)
                     {
-                        Debug.WriteLine("Change " + i);
+                        Debug.WriteLine("TrackBar_ValueChanged monitor: " + i);
                         _bars[sender as TrackBar].UpdateScreenWithBarValue(sender as TrackBar, _monitorCollection[i]);
                     }
                 }
@@ -254,12 +307,13 @@ namespace MonitorProfiler
 
         private void btnRevert_Click(object sender, EventArgs e)
         {
-            barBrightness.Value = (int) _currentMonitor.Brightness.Original / 5;
-            barContrast.Value = (int) _currentMonitor.Contrast.Original / 5;
-            barRed.Value = (int)_currentMonitor.RedGain.Original / 5;
-            barGreen.Value = (int)_currentMonitor.GreenGain.Original / 5;
-            barBlue.Value = (int)_currentMonitor.BlueGain.Original / 5;
-            barVolume.Value = (int)_currentMonitor.Volume.Original / 5;
+            barBrightness.Value = (int) _currentMonitor.Brightness.Original;
+            barContrast.Value = (int) _currentMonitor.Contrast.Original;
+            barRed.Value = (int)_currentMonitor.RedGain.Original;
+            barGreen.Value = (int)_currentMonitor.GreenGain.Original;
+            barBlue.Value = (int)_currentMonitor.BlueGain.Original;
+            barSharpness.Value = (int)_currentMonitor.Sharpness.Original;
+            barVolume.Value = (int)_currentMonitor.Volume.Original;
         }
 
         private void cboMonitors_SelectedIndexChanged(object sender, EventArgs e)
@@ -272,13 +326,10 @@ namespace MonitorProfiler
         {
             uint _currentBrightness = _currentMonitor.Brightness.Current;
             uint _currentContrast = _currentMonitor.Contrast.Current;
-            Debug.WriteLine("Brightness.Original " + _currentBrightness);
-            Debug.WriteLine("Brightness.Contrast " + _currentContrast);
 
             // Dim the monitor
             if (_currentBrightness < 30 && _currentContrast < 30)
             {
-                Debug.WriteLine("< 30");
                 NativeMethods.SetMonitorBrightness(_currentMonitor.HPhysicalMonitor, _currentBrightness + 30);
                 NativeMethods.SetMonitorContrast(_currentMonitor.HPhysicalMonitor, _currentContrast + 30);
             }
@@ -286,7 +337,6 @@ namespace MonitorProfiler
             {
                 uint minBrightness = (uint)((int)_currentBrightness - 30 >= 0 ? (int)_currentBrightness - 30 : 0);
                 uint minContrast = (uint)((int)_currentContrast - 30 >= 0 ? (int)_currentContrast - 30 : 0);
-                Debug.WriteLine(minBrightness + " + " + minContrast);
                 NativeMethods.SetMonitorBrightness(_currentMonitor.HPhysicalMonitor, minBrightness);
                 NativeMethods.SetMonitorContrast(_currentMonitor.HPhysicalMonitor, minContrast);
             }
@@ -298,6 +348,7 @@ namespace MonitorProfiler
 
         private void lstProfiles_SelectedValueChanged(object sender, EventArgs e)
         {
+            // Exception occured when clicking white space of the list (index = -1)
             if (lstProfiles.SelectedIndex >= 0)
             {
                 var selectedProfile = _config.Profiles.Where(p => p.Name == lstProfiles.SelectedItem.ToString()).FirstOrDefault();
@@ -311,12 +362,12 @@ namespace MonitorProfiler
                         continue;
 
                     cboMonitors.SelectedIndex = monitorCfg.Index;
-                    barBrightness.Value = monitorCfg.Brightness / 5;
-                    barContrast.Value = monitorCfg.Contrast / 5;
-                    barRed.Value = monitorCfg.Red / 5;
-                    barGreen.Value = monitorCfg.Green / 5;
-                    barBlue.Value = monitorCfg.Blue / 5;
-                    barVolume.Value = monitorCfg.Volume / 5;
+                    barBrightness.Value = monitorCfg.Brightness;
+                    barContrast.Value = monitorCfg.Contrast;
+                    barRed.Value = monitorCfg.Red;
+                    barGreen.Value = monitorCfg.Green;
+                    barBlue.Value = monitorCfg.Blue;
+                    barVolume.Value = monitorCfg.Volume;
                 }
             }
         }
@@ -324,18 +375,17 @@ namespace MonitorProfiler
         private void btnPower_Click(object sender, EventArgs e)
         {
             string value = ((KeyValuePair<string, string>)cboPower.SelectedItem).Value;
-            if (value == "61808")
+            // No VCP just force windows monitor sleeping
+            if (value == "61808") NativeMethods.SendMessage(this.Handle, NativeConstants.WM_SYSCOMMAND, (IntPtr)NativeConstants.SC_MONITORSLEEP, (IntPtr)2);
+            else
             {
-                Debug.WriteLine("Sleep");
-                NativeMethods.SendMessage(this.Handle, NativeConstants.WM_SYSCOMMAND, (IntPtr)NativeConstants.SC_MONITORSLEEP, (IntPtr)2);
-            } else
-            NativeMethods.SetVCPFeature(_currentMonitor.HPhysicalMonitor, NativeConstants.SC_MONITORPOWER, Convert.ToUInt32(value));
-
-            IntPtr teste = new IntPtr();
-            NativeMethods.GetVCPFeatureAndVCPFeatureReply(_currentMonitor.HPhysicalMonitor, NativeConstants.SC_MONITORPOWER, teste, ref _currentMonitor.VCPFeature.Current, ref _currentMonitor.VCPFeature.Max);
-
-            Log("test : {0}", _currentMonitor.VCPFeature.Current);
-            Log("test : {0}", _currentMonitor.VCPFeature.Max);
+                bool teest = NativeMethods.SetVCPFeature(_currentMonitor.HPhysicalMonitor, NativeConstants.SC_MONITORPOWER, Convert.ToUInt32(value));
+                if (teest == false)
+                {
+                    Debug.WriteLine(Marshal.GetLastWin32Error());
+                }
+                else Debug.WriteLine(teest);
+            }
         }
 
         private void btnInput_Click(object sender, EventArgs e)
@@ -368,25 +418,14 @@ namespace MonitorProfiler
             }
         }
 
-        private void btnFactoryReset_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void picVolume_Click(object sender, EventArgs e)
         {
             if (barVolume.Value > 0) barVolume.Value = 0;
         }
 
-        private void OnMesureCbItem(object sender, MeasureItemEventArgs e)
+        private void btnFactoryReset_Click(object sender, MouseEventArgs e)
         {
 
-        }
-
-        private void doit(object sender, EventArgs e)
-        {
-
-            this.RecreateHandle();
         }
     }
 }

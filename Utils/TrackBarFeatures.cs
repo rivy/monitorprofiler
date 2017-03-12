@@ -24,8 +24,9 @@ namespace MonitorProfiler.GUI
         // Update objects with new value from trackbar
         public void UpdateScreenWithBarValue(TrackBar bar, Monitor currentMonitor)
         {
-            uint newValue = (uint)bar.Value * 5;
-            _label.Text = string.Format("{0}%", newValue);
+            uint newValue = (uint)bar.Value;
+            if(bar.Maximum < 100) _label.Text = string.Format("{0}", newValue);
+            else _label.Text = string.Format("{0}%", newValue);
 
             switch (_type)
             {
@@ -48,6 +49,10 @@ namespace MonitorProfiler.GUI
                 case FeatureType.BlueGain:
                     currentMonitor.BlueGain.Current = newValue;
                     NativeMethods.SetMonitorRedGreenOrBlueGain(currentMonitor.HPhysicalMonitor, NativeStructures.MC_GAIN_TYPE.MC_BLUE_GAIN, newValue);
+                    break;
+                case FeatureType.Sharpness:
+                    currentMonitor.Sharpness.Current = newValue;
+                    NativeMethods.SetVCPFeature(currentMonitor.HPhysicalMonitor, NativeConstants.SC_MONITORSHARPNESS, newValue);
                     break;
                 case FeatureType.Volume:
                     currentMonitor.Volume.Current = newValue;
